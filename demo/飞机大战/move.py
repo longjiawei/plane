@@ -20,7 +20,7 @@ class Enemyplane():
         pass
 class Bullet():
     def __init__(self):
-
+        self.bullets = []
         self.bullet = pygame.image.load('D:\python\demo\飞机大战\图片\\15.1.png')
         self.bulletrect = pygame.Rect(30,30,30,30)
         self.bulletx = Heroplane.planex + 10
@@ -33,16 +33,18 @@ class Bullet():
             self.bulletx = Heroplane.planex + 10
         self.bulletrect[1] = self.bullety
         self.bulletrect[0] = self.bulletx
+        for self.bullet in self.bullets:
 
+            Bullet.bulletmove()
+            self.bullets.append(self.bullet)
 class Heroplane():
     def __init__(self):
         self.plane = pygame.image.load('D:\python\demo\飞机大战\图片\\1.3.png')
         self.planeRect = pygame.Rect(50,50,50,50)
         self.planex = 275
         self.planey = 740
-        # self.herobullets = [Bullet()for _ in range(1,30)]
-        # for self.herobuttet in self.herobullets:
-        #     self.herobullets.append(self.herobuttet)
+
+
 
     def planemove(self):
         if event.key == pygame.K_UP:
@@ -71,12 +73,12 @@ class Long():
     def updateBee(self):
         self.feifeiy += 4
         self.feifeiRect[1] = self.feifeiy
-        if self.feifeiy > 800 :
+        if self.feifeiy > 900 :
             self.feifeiy = 0
             self.feifeix = random.randint(100,500)
         self.feifei1y += 3
         self.feifei1Rect[1] = self.feifei1y
-        if self.feifei1y > 800:
+        if self.feifei1y > 900:
             self.feifei1y = 0
             self.feifei1x = random.randint(100, 500)
 class Map():
@@ -99,7 +101,6 @@ class Map():
 
 
 def Display():
-
     screen.fill((255, 255, 255))
     screen.blit(Map.background1, (0, Map.bg1rect[1]))
     screen.blit(Map.background2, (0, Map.bg2rect[1]))
@@ -108,7 +109,7 @@ def Display():
     screen.blit(Long.feifei, (Long.feifeix, Long.feifeiRect[1]))
     screen.blit(Long.feifei1, (Long.feifei1x, Long.feifei1Rect[1]))
     screen.blit(Heroplane.plane, (Heroplane.planex, Heroplane.planey))
-    screen.blit(Bullet.bullet,(Bullet.bulletx,Bullet.bullety))
+    screen.blit(Bullet.bullet, (Bullet.bulletx, Bullet.bullety))
     Bullet.bulletmove()
     Map.mapmove()
     Long.updateBee()
