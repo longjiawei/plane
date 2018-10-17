@@ -9,15 +9,29 @@ class Enemyplane():
         self.enemyplane = pygame.image.load('D:\python\demo\飞机大战\图片\\14.1.png')
         self.enemyplane1 = pygame.image.load('D:\python\demo\飞机大战\图片\\14.1.png')
         self.enemyplaneRect = pygame.Rect(60,60,60,60)
-        self.enemyplaneRect1 = pygame.Rect(60, 60, 60, 60)
-        self.enemyplanex = 200
-        self.enemyplanex1 = 400
-        self.enemplaney = 200
-        self.enemyplaney1 = 200
-        self.enemyplaneRect[1] = self.enemplaney
-        self.enemyplaneRect1[1] = self.enemyplaney1
+
+        self.enemyplanex = 0
+
+        self.enemyplaney = 0
+
+        self.direction = 'right'
+        self.speed = 1
+        self.enemyplaneRect[1] = self.enemyplaney
+
     def enemymove(self):
-        pass
+        self.enemyplaney += self.speed
+        if self.direction == 'right':
+            self.enemyplanex += 5
+        elif self.direction == 'left':
+            self.enemyplanex -= 5
+        if self.enemyplanex > 550 :
+            self.direction = 'left'
+        elif self.enemyplanex < 0 :
+            self.direction = 'right'
+        if self.enemyplaney > 850 :
+            self.enemyplaney = 0
+        self.enemyplaneRect[1] = self.enemyplaney
+        self.enemyplaneRect[0] = self.enemyplanex
 class Bullet():
     def __init__(self,screen):
         self.bullets = list()
@@ -26,9 +40,10 @@ class Bullet():
         self.bulletrect = pygame.Rect(30,30,30,30)
         self.bulletx = Heroplane.planex + 10
         self.bullety = Heroplane.planey - 20
-        self.bulletspeed = 20
+        self.bulletspeed = 30
     def bulletdisplay(self):
-        for bullet in range(10):
+
+        for bullet in range(5):
             self.screen.blit(Bullet.bullet, (Bullet.bulletx, Bullet.bullety))
             self.bullety -= self.bulletspeed
             if self.bullety < 0:
@@ -77,10 +92,12 @@ class Long():
         self.feifeiRect = pygame.Rect(65,50,65,50)
         self.feifeix = random.randint(100,500)
         self.feifeiy = -50
+        self.dead = False
         self.feifei1 = pygame.image.load('D:\python\demo\飞机大战\图片\\10.3.png')
         self.feifei1Rect = pygame.Rect(65, 50, 65, 50)
         self.feifei1x = random.randint(100, 500)
         self.feifei1y = -50
+
     def updateBee(self):
         self.feifeiy += 4
         self.feifeiRect[1] = self.feifeiy
@@ -115,27 +132,52 @@ def Display():
     screen.fill((255, 255, 255))
     screen.blit(Map.background1, (0, Map.bg1rect[1]))   #显示背景
     screen.blit(Map.background2, (0, Map.bg2rect[1]))
-    screen.blit(Enemyplane.enemyplane,(Enemyplane.enemyplanex,Enemyplane.enemplaney))
-    screen.blit(Enemyplane.enemyplane1,(Enemyplane.enemyplanex1,Enemyplane.enemyplaney1))
+    screen.blit(Enemyplane.enemyplane,(Enemyplane.enemyplanex,Enemyplane.enemyplaney))
+
     screen.blit(Long.feifei, (Long.feifeix, Long.feifeiRect[1]))
     screen.blit(Long.feifei1, (Long.feifei1x, Long.feifei1Rect[1]))
     screen.blit(Heroplane.plane, (Heroplane.planex, Heroplane.planey))
 
+    if checkdead():
+        getresult()
+    Enemyplane.enemymove()
     Bullet.bulletdisplay()
     Map.mapmove()
     Long.updateBee()
     pygame.display.update()
+def checkdead():
 
+    if Bullet.bulletrect.colliderect(Long.feifei1Rect) or Bullet.bulletrect.colliderect(Long.feifeiRect) or Bullet.bulletrect.colliderect(Enemyplane.enemyplaneRect):
+        Long.dead = True
+        return True
+    else:
+        return False
+
+
+def getresult():
+    global score
+    if Long.dead :
+        score += 1
+    final_text = 'Your final score is:' + str(score)
+    ft1_font = pygame.font.SysFont('Arial', 5)
+    ft1_surf = font.render(final_text,1,(243,255,255))
+    screen.blit(ft1_surf, (0, 0))
+    pygame.display.update()
 if __name__ == '__main__':
     pygame.init()
+    pygame.font.init()
+    font = pygame.font.SysFont(None, 50)
     size = width,height = 600,900
     screen = pygame.display.set_mode(size)
     pygame.key.set_repeat(10)
+    score = 0
     Long = Long()
     Heroplane = Heroplane()
     Map = Map()
     Enemyplane = Enemyplane()
+
     Bullet = Bullet(screen)
+
     clock = pygame.time.Clock()
     while True:
         clock.tick(500)
@@ -144,8 +186,6 @@ if __name__ == '__main__':
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 Heroplane.planemove()
-
-
         Display()
 
 
